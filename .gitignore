@@ -1,3 +1,5 @@
 build/**
 dist/**
 **~
+/config/eudatL2.conf
+

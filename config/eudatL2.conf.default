@@ -1,0 +1,24 @@
+### COPY THIS FILE TO eudatL2.conf ###
+### AND EDIT FOR YOUR SITE         ###
+
+
+[Main]
+## IO and processing settings
+baseURI = raid-uri://data-dir
+tempDir = /tmp
+outDir = /an/output/directory
+verbose = True
+maxproc = 4
+
+[DB]
+## EISCAT File catalogue settings
+db = db_name
+dbHost = db_host
+dbUser = db_user_name
+dbPass = db_password
+
+[B2]
+b2share_url = "https://url/to/b2share"
+community = "community-ID"
+community_specific = "schema-ID"
+token = "access-token"
