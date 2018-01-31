@@ -1,0 +1,32 @@
+=== EISCAT B2SHARE utilities             ===
+=== Level 2 data archive uploader        ===
+
+(C) Carl-Fredrik Enell, EISCAT HQ 2018
+carl-fredrik.enell@eiscat.se
+
+This package is intended to
+1) search the EISCAT L2 hourly directory catalogue in a specified date interval
+2) create hourly HDF5 files (which should be copied to a web server e.g. b2.eiscat.se)
+3) create B2SHARE metadata entries including experiment info and URLs to above web server  
+
+1. Dependencies
+
+- Standard Python libraries incl calendar, datetime, multiprocessing ...
+
+- Other Python libraries: MySQLdb,  h5py, NumPy, SciPy, cmath
+
+- json (??which??)
+
+- B2share client package (?? or port relevant parts to this package ??)
+
+2. Check configuration settings
+Modify ....
+
+
+3. Install
+python setup.py install
+ ...
+
+4. Usage example
+
+To add!!
