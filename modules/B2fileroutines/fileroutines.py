@@ -124,7 +124,7 @@ class Fileroutines:
         outFile=os.path.join(outputDir,str(resID)+'-'+expName+'_'+Antenna+'-'+os.path.basename(dataDir.strip('/'))+'.hdf5')
 
         if self.verbose:
-            print "Writing to " + outFile
+            print("Writing to " + outFile)
         
         try:
             hf=h5file(outFile,'w',driver='sec2',userblock_size=ubsize)
@@ -262,7 +262,7 @@ class Fileroutines:
     
         # Close outfile
         if self.verbose:
-            print "Closed output file " + outFile 
+            print("Closed output file " + outFile)
         hf.close()
 
         # Put the raw user block in the outfile

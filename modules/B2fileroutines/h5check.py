@@ -12,7 +12,7 @@ def insert_data(hf,hKey,indata,dataType,verbose):
     # check if dataset exists
     if not hf.__contains__(hKey):
         if verbose:
-            print "Creating dataset", hKey
+            print("Creating dataset " + hKey)
             
         try:
             if nCols > 1:
@@ -37,5 +37,5 @@ def insert_data(hf,hKey,indata,dataType,verbose):
             hf[hKey]=u'%s' % indata
                 
     else:
-        print "something is weird: dataset already existing in HDF output"
+        print("something is weird: dataset already existing in HDF output")
         raise IOError

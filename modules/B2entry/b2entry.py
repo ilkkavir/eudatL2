@@ -8,7 +8,7 @@ class B2Entry:
     which is in essence a wrapper for fileroutines and B2SHARE API routines.
     """
     
-    from B2fileroutines import fileroutines
+    
     
     def __init__(self,verbose):
         # Global definition of verbosity
@@ -16,8 +16,10 @@ class B2Entry:
         
     def __call__(self,args):
         # Hourly HDF5 file writer
+        from B2fileroutines import fileroutines
+        fileroutines.Fileroutines(self.verbose).B2file(args)
 
-        self.fileroutines.Fileroutines(self.verbose).B2file(args)
-
-
+        
+        
+        
     
