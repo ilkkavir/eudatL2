@@ -57,7 +57,7 @@ class Fileroutines:
         from h5py import File as h5file
         import tarfile
         from numpy import array, exp2, log2, ceil
-        import ConfigParser
+        from configparser import SafeConfigParser
 
         # Local libraries
         from B2fileroutines import h5check, dspname, pointdir 
@@ -93,7 +93,7 @@ class Fileroutines:
         if infoDir:
 
             # Tar info dir to temporary file
-            config=ConfigParser.SafeConfigParser({'baseURI':'eiscat-raid://localhost/'})
+            config=SafeConfigParser({'baseURI':'eiscat-raid://localhost/'})
             config.read('/usr/local/etc/L2write.conf')
             baseURI=config.get("Main","baseURI")
             tmpdir=config.get("Main","tempDir")

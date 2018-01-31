@@ -27,7 +27,7 @@ from email.message import EmailMessage
 from urllib.parse import urlparse
 from datetime import datetime
 # import configuration
-import ConfigParser
+import configparser
 
 logging.basicConfig(filename=configuration.log_file_path, level=configuration.logging_level)
 
