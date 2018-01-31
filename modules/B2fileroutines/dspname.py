@@ -1,17 +1,21 @@
-# A simple routine to guess DSP experiment name and version from experiment path
-# Follows download.cgi but simplified
-# C F Enell 20161116, 20171113
+"""
+Guess DSP experiment name and version from experiment path
+Follows download.cgi but simplified
+C F Enell 2016-2018
+"""
 
 class DSPname:
 
-    
     #Experiment dictionary:
     #DSP name : [list of possible exp path names]
     # note: taken from schedule download.cgi function
     # 20171113: added a few non-Guisdap names found in 2015 archive
+    # TODO read from config file
 
-    def __init__(self):
-        exps={'arc':['arc'],
+    def __init__(self,expname):
+
+        self.thisexpname=expname
+        self.exps={'arc':['arc'],
               'arc1':['arc1','arc_slice'],
               'dlayer':['dlayer'],
               'arcd':['arcd','arc_dlayer'],
@@ -55,44 +59,39 @@ class DSPname:
               'tau8':['tau8'],
               'taro':['taro'],
               'uhf1g2':['uhf1g2','sp-vi-uhf1-g2']}
+
+
+    # Map path name to DSP exp name by finding possible exp name part
+    # 20171113:  default empty string.
+    def dsp(self):
+
+        out=''
     
-        # Map path name to DSP exp name by finding possible exp name part
-        # 20171113:  default empty string.
-        def dsp(self,filename):
+        for experiment in self.exps:
+            for expname in self.exps[experiment]:
+                if self.thisexpname.count(expname)>0:
+                    out=experiment
+                
+        if not out.isalnum():
+            print("Warning: No experiment name found in name string " + filename)
+            print("Metadata string will be empty")
 
-            dsp=''
+        return out
 
-            for exp in self.exps:
-                for expname in exps[exp]:
-                    if filename.count(expname)>0:
-                        dsp=exp
+    # Find experiment version from exp name part
+    # 20171113:  Search by regexp, default to '1.0' if not in name
+    def ver(self):    
 
-            if not dsp.isalnum():
-                print("Warning: No experiment name found in name string " + filename)
-                print("Metadata string will be empty")
+        import re
 
-            return dsp
-            
-        # Find experiment version from exp name part
-        # 20171113:  Search by regexp, default to '1.0' if not in name
-        def ver(self,filename):    
-
-            import re
-
-            try:
-                vs=re.search('\w*_(?P<ver>\d\.\d*)\w*_\w*',filename)
-                ver=vs.group('ver')
-            except:
-                ver='1.0'
-                print("Warning: No experiment version found in name string " + filename)
-                print("Assuming " + ver)
+        try:
+            vs=re.search('\w*_(?P<ver>\d\.\d*)\w*_\w*',self.thisexpname)
+            version=vs.group('ver')
+        except:
+            version='1.0'
+            print("Warning: No experiment version found in name string " + self.thisexpname)
+            print("Assuming " + version)
         
-            return ver
-
-
-            
-    
-
-    
+        return version
 
           

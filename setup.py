@@ -6,7 +6,7 @@ setup(name = "eudatL2",
       author_email="carl-fredrik.enell@eiscat.se",
       url="http://www.eiscat.se/raw/fredrik/",
       package_dir = {'': 'modules'},
-      packages = ['B2fileroutines','EISCATL2catalog'],
+      packages = ['B2entry','B2fileroutines','EISCATL2catalog'],
       scripts = ['scripts/L2toB2.py'],
       data_files=[
           ('/usr/local/etc/',['config/eudatL2.conf'])

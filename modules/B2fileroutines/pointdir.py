@@ -1,5 +1,3 @@
-### Azimuth-elevation boundary
-
 """
 Boundaries of EISCAT scan azimuth/elevation
 calculated as convex hull of point directions projected on complex plane,
@@ -7,30 +5,36 @@ and returned in az/el coordinates
 
 NB: Rounding all values to 1 or 2 decimals
 """
-class AzEl:
 
-    def boundary(self,az,el):
+class AzEl:
+    
+    def __init__(self,az,el):
+
+        self.az=az
+        self.el=el
+        
+    def boundary(self):
     
         import numpy as np
         import scipy.spatial as sp
         import cmath
 
-        npoints=len(az)
-        assert npoints==len(el)
+        npoints=len(self.az)
+        assert npoints==len(self.el)
 
         ## project to polar points (azimuth angle [rad], zenith angle [degrees]) in cartesian system
-        grid=np.zeros((len(az),2))    
+        grid=np.zeros((len(self.az),2))    
 
         for k in range(npoints):
     
             # Azimuth
-            phi=round(900.0-10.0*az[k])/10.0
+            phi=round(900.0-10.0*self.az[k])/10.0
             if phi<0:
                 phi=phi+360.0
             phi=phi*np.pi/180.0
         
             #Zenith angle degrees
-            r=round(900.0-10.0*el[k])/10.0
+            r=round(900.0-10.0*self.el[k])/10.0
             
             # projection to plane
             z=cmath.rect(r,phi)

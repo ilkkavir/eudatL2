@@ -21,8 +21,8 @@ import ConfigParser
 from multiprocessing import Pool, cpu_count
 
 ### Local modules
-from EISCATL2Catalog import catalogquery
-from B2fileroutines import fileroutines
+from EISCATL2catalog import catalogquery
+from B2entry import b2entry
 
 ### Main program
 if __name__ == '__main__':
@@ -114,8 +114,13 @@ if __name__ == '__main__':
                                 location=eloc['location'].replace(baseURI,'') # remove eiscat-raid://host/ for  actual data path
                                         # Build array of arrays
                                         # [[ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath],...]
-                                qlist.append([eid['resource_id'],meta['experiment_name'],meta['antenna'],resource,eid['start'],eid['end'],location,iloc['location'],outpath,verbose])
-                                               
+                                qlist.append([eid['resource_id'],meta['experiment_name'],meta['antenna'],resource,eid['start'],eid['end'],location,iloc['location'],outpath])
+
+
+        if len(qlist)==0:
+                print("No data found in interval " + t1.strftime('%Y-%m-%dT%H:%M:%S') + " -- " + t2.strftime('%Y-%m-%dT%H:%M:%S') + ". Nothing to do.")
+                sys.exit(0)
+                                
         if verbose:
                 print("%d hourly directories in queue" % (len(qlist)))
                                 
@@ -127,11 +132,13 @@ if __name__ == '__main__':
                 nproc=min(len(qlist),nproc)
         else:
                 nproc=1
+
+        
                 
         print("Starting %d processes" % nproc)
         # Start processing all entries in qlist
         p=Pool(nproc)
-        p.map(fileroutines.Fileroutines.B2file, qlist)
+        p.map(b2entry.B2Entry(verbose), qlist)
 
         # Terminate all processes (necessary?) 
         p.close()
@@ -141,4 +148,3 @@ if __name__ == '__main__':
                 print("%s ready" % (sys.argv[0]))
 
 ### End of program
-        

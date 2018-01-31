@@ -1,5 +1,7 @@
-## subroutine for dataset creation
-def insert_data(hf,hKey,indata,dataType):
+### Helper subroutine for dataset creation and insertion
+### into open HDF5 file
+
+def insert_data(hf,hKey,indata,dataType,verbose):
 
     # check scalar or vector
     try:
@@ -37,4 +39,3 @@ def insert_data(hf,hKey,indata,dataType):
     else:
         print "something is weird: dataset already existing in HDF output"
         raise IOError
-

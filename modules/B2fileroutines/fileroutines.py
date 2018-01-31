@@ -1,6 +1,14 @@
-### Routines to read and write EISCAT data files
 class Fileroutines:
-     
+
+    """ 
+    Routines to read and write EISCAT data files
+    to hourly HDF5 files.
+    """
+    
+    def __init__(self,verbose):
+        # Global definition
+        self.verbose=verbose
+        
     def readMatBz2(self,matfile):
         ## Input function for bzipped matlab files.
         ## Input: Path to matlab file
@@ -39,29 +47,34 @@ class Fileroutines:
 
 
     def B2file(self,args):
-        ### Hourly HDF5 file writer
+        ### The hourly HDF5 file writer
+        # Version string: bump if changed HDF5 format
+        efVersion='2018013102'
+
+        # Standard libraries
         import os
         import datetime
         from h5py import File as h5file
         import tarfile
         from numpy import array, exp2, log2, ceil
         import ConfigParser
-        #Local
-        import h5check, dspname, pointdir 
 
-        efVersion='2018013001'
-        #Creation time
+        # Local libraries
+        from B2fileroutines import h5check, dspname, pointdir 
+
+        # Creation at current time
         cTime=datetime.datetime.today().isoformat()
     
         #Unpack input
-        resID,expName,Antenna,Resources,dbStartTime,dbStopTime,dataDir,infoDir,outputDir,verbose=args
-    
-        ## Definitions
-        #map record names matlab to HDF Data/ structure
+        resID,expName,Antenna,Resources,dbStartTime,dbStopTime,dataDir,infoDir,outputDir=args
+
+        ## EISCAT data definitions. TODO move to config file.
+        # Matlab file variables to HDF Data/ structure
         dataMap={'d_data' : 'Data/%s/L2', 'd_raw' : 'Data/%s/L1', 'd_parbl' : 'Data/%s/Parameters' }
+        # Data types
         dtMap={'d_data' : 'double', 'd_raw' : 'i2'} 
     
-        #map d_parbl entries matlab to HDF Metadata    
+        # Matlab d_parbl entries to HDF Metadata structure
         metaKey=['d_parbl']
         endTimeIdx=slice(0,6)
         intTimeIdx=6
@@ -70,16 +83,16 @@ class Fileroutines:
         # UHF parbl mapping
         metaMap={7 : 'MetaData/%s/Power', 8 : 'MetaData/%s/Elevation', 9 : 'MetaData/%s/Azimuth' }
     
-
         # VHF parbl mapping
         vhfAnt=3
         VmetaMap={7 : 'MetaData/%s/Power', 9 : 'MetaData/%s/Azimuth'}
         velIdx=slice(64,68)
 
-        # Gather info if infoDir is not empty
+        ## Gather info if infoDir is not empty
         ubsize=0
         if infoDir:
-            # Put tarred info dir in temporary file
+
+            # Tar info dir to temporary file
             config=ConfigParser.SafeConfigParser({'baseURI':'eiscat-raid://localhost/'})
             config.read('/usr/local/etc/L2write.conf')
             baseURI=config.get("Main","baseURI")
@@ -88,27 +101,29 @@ class Fileroutines:
             idir=infoDir.replace(baseURI,'') # local path
             tarpath=os.path.join(tmpdir,str(resID)+'-info.tar.bz2')
     
-            if verbose:
+            if self.verbose:
                 print('Creating info tar data %s' % tarpath)
 
             with tarfile.open(tarpath,'w|bz2') as tfile:
                 tfile.add(idir)
                 
-            #put tarred data in memory for userblock
+            # Put tarred data in memory for userblock
             with open(tarpath,'rb') as tfile:
-            ub=tfile.read()
+                ub=tfile.read()
     
-            if verbose:
+            if self.verbose:
                 print('Removing temporary file %s' % tarpath)
 
+            # Delete temporary tar file
             os.remove(tarpath)
     
-            #user block size must be a power of 2 and larger than 512
+            # User block size must be a power of 2 >= 512
             ubsize=max(512,int(exp2(ceil(log2(len(ub))))))
         
-        ## Open file for writing
+        ## Open HDF5 file for writing
         outFile=os.path.join(outputDir,str(resID)+'-'+expName+'_'+Antenna+'-'+os.path.basename(dataDir.strip('/'))+'.hdf5')
-        if verbose:
+
+        if self.verbose:
             print "Writing to " + outFile
         
         try:
@@ -133,7 +148,7 @@ class Fileroutines:
         el=[]
             
         for inFile in inFiles:
-            if verbose:
+            if self.verbose:
                 print("Mat file no %d" % recordNo)
             timestamp=os.path.basename(inFile).split('.')[0]
             inpData=self.readMatBz2(os.path.join(dataDir,inFile))
@@ -153,8 +168,8 @@ class Fileroutines:
                     dumpStartTime=dumpEndTime-datetime.timedelta(seconds=intTime)
                     fileStartTime=min(dumpStartTime, fileStartTime)
                 
-                    h5check.insert_data(hf,'MetaData/%s/startTime' % (timestamp), dumpStartTime.isoformat(),False)
-                    h5check.insert_data(hf,'MetaData/%s/endTime' % (timestamp), dumpEndTime.isoformat(),False)
+                    h5check.insert_data(hf,'MetaData/%s/startTime' % (timestamp), dumpStartTime.isoformat(),False,self.verbose)
+                    h5check.insert_data(hf,'MetaData/%s/endTime' % (timestamp), dumpEndTime.isoformat(),False,self.verbose)
 
                     # Map other parbl metadata
                     isvhf=indata[0][antIdx]==vhfAnt
@@ -162,7 +177,7 @@ class Fileroutines:
                         #VHF
                         # Elevation vector separately
                         vel=indata[0][velIdx]
-                        h5check.insert_data(hf,'MetaData/%s/Elevation' % (timestamp),vel,False)
+                        h5check.insert_data(hf,'MetaData/%s/Elevation' % (timestamp),vel,False,self.verbose)
 
                         #Save to az/el grid
                         for elev in vel:
@@ -178,7 +193,7 @@ class Fileroutines:
                         hKey=theMap[hInd] % (timestamp)
                         val=indata[0][hInd]
                         # create / add dataset
-                        h5check.insert_data(hf,hKey,val,False)
+                        h5check.insert_data(hf,hKey,val,False,self.verbose)
 
                         # keep track of min and max aximuth
                         if hKey.find('Azimuth')>0:
@@ -206,7 +221,7 @@ class Fileroutines:
                     
                     # format input to array or string
                     indata=inpData[key]            
-                    h5check.insert_data(hf,hKey,indata,dataType)
+                    h5check.insert_data(hf,hKey,indata,dataType,self.verbose)
 
                 
             # Next
@@ -215,38 +230,38 @@ class Fileroutines:
         ## End of loop
 
         # Creation and version stamp
-        h5check.insert_data(hf,'MetaData/CreationTime',cTime,False)
-        h5check.insert_data(hf,'MetaData/EudatfileVersion',efVersion,False)
+        h5check.insert_data(hf,'MetaData/CreationTime',cTime,False,self.verbose)
+        h5check.insert_data(hf,'MetaData/EudatfileVersion',efVersion,False,self.verbose)
     
     
         # Add the SQL metadata 
-        h5check.insert_data(hf,'MetaData/ID',resID,False)
-        h5check.insert_data(hf,'MetaData/ExperimentName',expName,False)
-        h5check.insert_data(hf,'MetaData/DSPexp',dspname.DSPname.dsp(expName),False)
-        h5check.insert_data(hf,'MetaData/DSPver',dspname.DSPname.ver(expName),False)
-        h5check.insert_data(hf,'MetaData/Antenna',Antenna,False)
-        h5check.insert_data(hf,'MetaData/Resources',Resources,False)
-        h5check.insert_data(hf,'MetaData/StartTime',fileStartTime,False)
-        h5check.insert_data(hf,'MetaData/StopTime',fileStopTime,False)
+        h5check.insert_data(hf,'MetaData/ID',resID,False,self.verbose)
+        h5check.insert_data(hf,'MetaData/ExperimentName',expName,False,self.verbose)
+        h5check.insert_data(hf,'MetaData/DSPexp',dspname.DSPname(expName).dsp(),False,self.verbose)
+        h5check.insert_data(hf,'MetaData/DSPver',dspname.DSPname(expName).ver(),False,self.verbose)
+        h5check.insert_data(hf,'MetaData/Antenna',Antenna,False,self.verbose)
+        h5check.insert_data(hf,'MetaData/Resources',Resources,False,self.verbose)
+        h5check.insert_data(hf,'MetaData/StartTime',fileStartTime,False,self.verbose)
+        h5check.insert_data(hf,'MetaData/StopTime',fileStopTime,False,self.verbose)
 
         if dbStartTime != fileStartTime:
-            if verbose:
+            if self.verbose:
                 print('Warning: DB timestamp does not agree')
-            h5check.insert_data(hf,'MetaData/DBStartTime',dbStartTime,False)
+            h5check.insert_data(hf,'MetaData/DBStartTime',dbStartTime,False,self.verbose)
 
         if dbStopTime != fileStopTime:
-            if verbose:
+            if self.verbose:
                 print('Warning: DB timestamp does not agree')
-            h5check.insert_data(hf,'MetaData/DBStopTime',dbStopTime,False)
+            h5check.insert_data(hf,'MetaData/DBStopTime',dbStopTime,False,self.verbose)
 
-        h5check.insert_data(hf,'MetaData/InfoDir',infoDir,False)
+        h5check.insert_data(hf,'MetaData/InfoDir',infoDir,False,self.verbose)
     
         # Azimuth- elevation hull
-        azel=pointdir.AzEl.boundary(az,el)
-        h5check.insert_data(hf,'MetaData/AzElLimits',azel,False)
+        azel=pointdir.AzEl(az,el).boundary()
+        h5check.insert_data(hf,'MetaData/AzElLimits',azel,False,self.verbose)
     
         # Close outfile
-        if verbose:
+        if self.verbose:
             print "Closed output file " + outFile 
         hf.close()
 
@@ -258,7 +273,7 @@ class Fileroutines:
                 hf.seek(0)
                 hf.write(ub)
     
-            if verbose:
+            if self.verbose:
                 print('Added info dir to user block of %s' % outFile)
 
 ### Done
