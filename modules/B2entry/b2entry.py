@@ -35,12 +35,11 @@ class B2Entry:
             client=B2SHAREClient.B2SHAREClient(community_id=self.community_id, url=self.config.get('B2','b2share_url'),token=self.config.get('B2','token') )
 
             # Create a draft
-            draft_id=args[0] # Resource ID
-            draft=client.get_draft(draft_id)
+            draft=client.create_draft()
 
             # Insert metadata
             json_patch=EISCATmetadata.MetaDataPatch(args,self.community_specific_id)
             client.update_draft(draft, json_patch)
-
+            print(json_patch)
 
     
