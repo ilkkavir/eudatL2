@@ -32,7 +32,7 @@ class B2Entry:
             self.community_id=self.config.get('B2','community')
             self.community_specific_id=self.config.get('B2','community_specific')
 
-            b2c=B2SHAREClient.B2SHAREClient(community_id=self.community_id, url=self.config.get('B2','b2share_url'),token=self.config.get('B2','token') )
+            client=B2SHAREClient.B2SHAREClient(community_id=self.community_id, url=self.config.get('B2','b2share_url'),token=self.config.get('B2','token') )
 
             # Create a draft
             draft_id=args[0] # Resource ID
