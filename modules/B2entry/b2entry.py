@@ -24,7 +24,6 @@ class B2Entry:
         # Create a B2SHARE record for this file?
         if self.config.getboolean('B2','b2share_entry'):
             
-            print("Creating B2SHARE record")
             from B2SHAREClient import B2SHAREClient,EISCATmetadata
             
             # Set up one client instance
@@ -42,7 +41,6 @@ class B2Entry:
             # Insert metadata
             json_patch=EISCATmetadata.MetaDataPatch(args,self.community_specific_id)
             client.update_draft(draft, json_patch)
-            
-        
-        
+
+
     

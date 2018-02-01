@@ -94,4 +94,19 @@ class DSPname:
         
         return version
 
+    # Find country code from <CODE>@<antenna>
+    def cc(self):    
+
+        import re
+
+        try:
+            cs=re.search('\w*_(?P<cc>\w\w)$',self.thisexpname)
+            assoc=cs.group('cc')
+        except:
+            assoc=''
+            print("Warning: No country code found in name string " + self.thisexpname)
+            print("Will be empty.")
+        
+        return assoc
+
           

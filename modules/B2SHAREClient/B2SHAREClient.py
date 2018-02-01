@@ -27,9 +27,12 @@ from email.message import EmailMessage
 from urllib.parse import urlparse
 from datetime import datetime
 # import configuration
-import configparser
+from configparser import SafeConfigParser
 
-logging.basicConfig(filename=configuration.log_file_path, level=configuration.logging_level)
+configuration=SafeConfigParser()
+configuration.read('/usr/local/etc/eudatL2.conf')
+
+logging.basicConfig(filename=configuration.get('Log','log_file_path'), level=eval(configuration.get('Log','logging_level')))
 
 
 class B2SHAREClient(object):
@@ -98,7 +101,7 @@ class B2SHAREClient(object):
                 raise
 
     def get_file(self, url_suffix):
-        path = configuration.tmp_file_path + url_suffix
+        path = configuration.get('Main','tempDir') + url_suffix
 
         # a cached file, return the file path
         if os.path.isfile(path):
@@ -178,7 +181,7 @@ class B2SHAREClient(object):
 
         logging.debug('draft %s, updated: %s, created: %s, "diff (s): %s', draft['id'], draft['updated'].split("+")[0], draft['created'].split("+")[0], difference.seconds)
 
-        if difference.seconds < configuration.update_time_criteria:
+        if difference.seconds < configuration.getint('B2','update_time_criteria'):
             return True
         else:
             return False
@@ -210,12 +213,12 @@ class B2SHAREClient(object):
         msg = EmailMessage()
         msg.set_content(url_text)
 
-        msg['Subject'] = configuration.notification_subject
-        msg['From'] = configuration.notification_from
+        msg['Subject'] = configuration.get('B2','notification_subject')
+        msg['From'] = configuration.get('B2','notification_from')
 
-        for dest in configuration.notification_to_list:
+        for dest in configuration.get('B2','notification_to_list'):
             msg['To'] = dest
-            s = smtplib.SMTP(configuration.smtp_server_hostname)
+            s = smtplib.SMTP(configuration.get('B2','smtp_server_hostname'))
             s.set_debuglevel(1)
-            s.sendmail(configuration.notification_from, dest, msg.as_string())
+            s.sendmail(configuration.get('B2','notification_from'), dest, msg.as_string())
             s.quit()
