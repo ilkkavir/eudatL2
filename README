@@ -10,22 +10,18 @@ This package is intended to
 3) create B2SHARE metadata entries including experiment info and URLs to above web server  
 
 1. Dependencies
+- Python 3.x with standard libraries
 
-- Standard Python libraries incl calendar, datetime, multiprocessing ...
-
-- Other Python libraries: MySQLdb,  h5py, NumPy, SciPy, cmath
+- Other Python3 libraries: MySQLdb,  h5py, NumPy, SciPy, cmath
 
 - json (??which??)
 
-- B2share client package (?? or port relevant parts to this package ??)
 
 2. Check configuration settings
-Modify ....
-
+Copy default configuration file to config/eudatL2.conf and modify.
 
 3. Install
-python setup.py install
- ...
+python3 setup.py install
 
 4. Usage example
 
