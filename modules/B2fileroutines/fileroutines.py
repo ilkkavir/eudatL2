@@ -93,7 +93,7 @@ class Fileroutines:
         if infoDir:
 
             # Tar info dir to temporary file
-            config=SafeConfigParser({'baseURI':'eiscat-raid://localhost/'})
+            config=SafeConfigParser(inline_comment_prefixes={'#'})
             config.read('/usr/local/etc/L2write.conf')
             baseURI=config.get("Main","baseURI")
             tmpdir=config.get("Main","tempDir")

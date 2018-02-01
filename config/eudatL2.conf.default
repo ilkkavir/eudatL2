@@ -3,22 +3,35 @@
 
 
 [Main]
-## IO and processing settings
-baseURI = raid-uri://data-dir
-tempDir = /tmp
-outDir = /an/output/directory
-verbose = True
-maxproc = 4
+### Basic configuration
+baseURI = raid-uri://data-dir # Internal RAID URI
+tempDir = /data/eudat/tmp     # Temporary file path for HDF5 creation etc
+outDir = /data/eudat/www/     # Output HDF file path
+verbose = True 		      # Print outputs. Todo: Add logging instead
+maxproc = 4 		      # Max number of parallel processes to run  
+
 
 [DB]
-## EISCAT File catalogue settings
-db = db_name
-dbHost = db_host
-dbUser = db_user_name
-dbPass = db_password
+### Directory catalogue DB configuration
+db = db_name  		# Name of SQL DB
+dbHost = eiscathq	# DB host
+dbUser = archiver	# DB user
+dbPass = ks902jf4	# DB password
 
 [B2]
-b2share_url = "https://url/to/b2share"
-community = "community-ID"
-community_specific = "schema-ID"
-token = "access-token"
+### B2SHARE API client configuration
+b2share_entry = True			# Create B2share record or only local HDF5 file?
+b2share_url = "https://url/to/b2share" 	# URL of B2SHARE instance  
+community = "community-uuid"	     	# Community UUID
+community_specific = "community-specific-schema-uuid"	# UUID of community-specific schema
+token = "accesstoken" 					# B2SHARE Access token
+# Email notification
+notification_subject = '[B2SHARE Client] Records updated'
+notification_from = "b2@some.where"
+notification_to_list = [ "contact.person@some.where" ]
+smtp_server_hostname = 'smtp.server.domain'
+
+### Logging configuration (todo: add logging)
+[Log]
+log_file_path = /log/file/path
+logging_level = logging.INFO

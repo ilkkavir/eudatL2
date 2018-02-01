@@ -28,7 +28,7 @@ from B2entry import b2entry
 
 if __name__=='__main__':
 
-    config=SafeConfigParser()    
+    config=SafeConfigParser(inline_comment_prefixes={'#'})    
     config.read('/usr/local/etc/eudatL2.conf')
 
     baseURI=config.get("Main","baseURI")
@@ -139,7 +139,7 @@ if __name__=='__main__':
     print("Starting %d processes" % nproc)
     # Start processing all entries in qlist
     p=Pool(nproc)
-    p.map(b2entry.B2Entry(verbose), qlist)
+    p.map(b2entry.B2Entry(), qlist)
 
     # Terminate all processes (necessary?) 
     p.close()
