@@ -121,7 +121,8 @@ class Fileroutines:
             ubsize=max(512,int(exp2(ceil(log2(len(ub))))))
         
         ## Open HDF5 file for writing
-        outFile=os.path.join(outputDir,str(resID)+'-'+expName+'_'+Antenna+'-'+os.path.basename(dataDir.strip('/'))+'.hdf5')
+        hourDirName=os.path.basename(dataDir.strip('/')
+        outFile=os.path.join(outputDir,hourDirName,str(resID)+'-'+expName+'_'+Antenna+'-'+hourDirName+'.hdf5')
 
         if self.verbose:
             print("Writing to " + outFile)
@@ -276,4 +277,6 @@ class Fileroutines:
             if self.verbose:
                 print('Added info dir to user block of %s' % outFile)
 
+        # return name of written file
+        return outFile
 ### Done

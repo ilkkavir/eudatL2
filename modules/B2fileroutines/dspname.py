@@ -100,7 +100,7 @@ class DSPname:
         import re
 
         try:
-            cs=re.search('\w*_(?P<cc>\w\w)$',self.thisexpname)
+            cs=re.search('\w*_(?P<cc>\w\w+)$',self.thisexpname)
             assoc=cs.group('cc')
         except:
             assoc=''

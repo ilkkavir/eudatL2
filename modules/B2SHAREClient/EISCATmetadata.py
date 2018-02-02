@@ -86,7 +86,7 @@
 #     }
 # }
 # 
-def MetaDataPatch(args, community_specific_id):
+def MetaDataPatch(args, out_file_url, community_specific_id):
     
     from jsonpatch import JsonPatch
     from B2fileroutines import dspname
@@ -96,7 +96,7 @@ def MetaDataPatch(args, community_specific_id):
     expid=args[0]
     expname = dspname.DSPname(args[1]).dsp()
     expver =  dspname.DSPname(args[1]).ver()
-    assoc = dspname.DSPname(args[1]).cc().upper()
+    assoc = dspname.DSPname(args[1]).cc().upper() # Fixme: take multiple entries from resource if exists
     antenna = args[2]
     resource = args[3]
     
@@ -160,8 +160,7 @@ def MetaDataPatch(args, community_specific_id):
     json_patch={"op": "add", "path": "/resource_types/resource_type_general", "value": "Collection"}
     json_patch_list.append(json_patch)
     
-    # FIXME get from config and output file name
-    json_patch={"op": "add", "path": "/alternate_identifiers/alternate_identifier", "value": "http://foo.bar.baz"}
+    json_patch={"op": "add", "path": "/alternate_identifiers/alternate_identifier", "value": out_file_url }
     json_patch_list.append(json_patch)
     
     json_patch={"op": "add", "path": "/alternate_identifiers/alternate_identifier_type", "value": "URL" }
@@ -178,7 +177,7 @@ def MetaDataPatch(args, community_specific_id):
     json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/end_time" , "value": endTime }
     json_patch_list.append(json_patch)
 
-    # Fixme
+    # Fixme: multiple codes to array?
     json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/account" , "value": assoc }
     json_patch_list.append(json_patch)
     
