@@ -121,12 +121,16 @@ class Fileroutines:
             ubsize=max(512,int(exp2(ceil(log2(len(ub))))))
         
         ## Open HDF5 file for writing
-        hourDirName=os.path.basename(dataDir.strip('/')
-        outFile=os.path.join(outputDir,hourDirName,str(resID)+'-'+expName+'_'+Antenna+'-'+hourDirName+'.hdf5')
+        hourDirName=os.path.basename(dataDir.strip('/'))
+        dayDirName=hourDirName.split('_')[0]
+        outFile=os.path.join(outputDir,dayDirName,str(resID) + '-' + expName + '_' + Antenna + '-' + hourDirName + '.hdf5')
 
         if self.verbose:
             print("Writing to " + outFile)
-        
+
+        if not(os.path.exists(os.path.dirname(outFile))):
+            os.makedirs(os.path.dirname(outFile))
+            
         try:
             hf=h5file(outFile,'w',driver='sec2',userblock_size=ubsize)
 

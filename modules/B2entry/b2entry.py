@@ -33,7 +33,7 @@ class B2Entry:
             draft=client.create_draft()
 
             # Insert metadata
-            json_patch=EISCATmetadata.MetaDataPatch(args, self.config.get('B2','local_base_url') + outFile, elf.config.get('B2','community_specific'))
+            json_patch=EISCATmetadata.MetaDataPatch(args, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community_specific'))
             client.update_draft(draft, json_patch)
             print(json_patch)
 
