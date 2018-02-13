@@ -86,7 +86,7 @@
 #     }
 # }
 # 
-def MetaDataPatch(args, out_file_url, community_specific_id):
+def MetaDataPatch(args, out_file_url, community_uuid, community_specific_id):
     
     from jsonpatch import JsonPatch
     from B2fileroutines import dspname
@@ -116,13 +116,12 @@ def MetaDataPatch(args, out_file_url, community_specific_id):
     longitude = stnLong[antenna.lower()]
     
     
-    ## Build the patch
+    ## Build initial JSON for create_draft
+    draft_json = u'{"titles":[{"title":"%s"}], "community":"%s", "open_access":false, "community_specific": {}}' % (expname + " " + antenna + " " + startTime, community_uuid)
+    
+
+    ## Build the patch of EISCAT specific metadata for update_draft
     json_patch_list=[]
-    
-    ## Common metadata
-    json_patch={"op": "add", "path": "/titles/title", "value": expname + " " + antenna + " " + startTime }
-    json_patch_list.append(json_patch)
-    
     json_patch={"op": "add", "path": "/creators/creator_name", "value": "EISCAT Scientific Association" }
     json_patch_list.append(json_patch)
     
@@ -140,9 +139,6 @@ def MetaDataPatch(args, out_file_url, community_specific_id):
     json_patch_list.append(json_patch)
     
     json_patch={"op": "add", "path": "/descriptions/description_type", "value": "Abstract" }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/open_access", "value": False }
     json_patch_list.append(json_patch)
     
     json_patch={"op": "add", "path": "/embargo_date", "value": embargoTime }

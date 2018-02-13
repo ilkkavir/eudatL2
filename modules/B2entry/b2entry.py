@@ -25,16 +25,18 @@ class B2Entry:
         if self.config.getboolean('B2','b2share_entry'):
             
             from B2SHAREClient import B2SHAREClient,EISCATmetadata
-            
+            from json import loads
             # Set up one client instance 
             client=B2SHAREClient.B2SHAREClient(community_id=self.config.get('B2','community'), url=self.config.get('B2','b2share_url'),token=self.config.get('B2','token') )
 
             # Create a draft
-            draft=client.create_draft()
+            
 
             # Insert metadata
-            json_patch=EISCATmetadata.MetaDataPatch(args, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community_specific'))
-            client.update_draft(draft, json_patch)
-            print(json_patch)
+            basic_json, json_patch = EISCATmetadata.MetaDataPatch(args, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community'), self.config.get('B2','community_specific'))
 
-    
+            draft_json=client.create_draft(basic_json)
+            draft=loads(draft_json)
+            client.update_draft(draft['id'], json_patch)
+
+            client.upload_file(draft['files'], outFile)

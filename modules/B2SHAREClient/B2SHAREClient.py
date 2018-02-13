@@ -26,8 +26,11 @@ import smtplib
 from email.message import EmailMessage
 from urllib.parse import urlparse
 from datetime import datetime
+from os.path import basename
+
 # import configuration
 from configparser import SafeConfigParser
+
 
 configuration=SafeConfigParser()
 configuration.read('/usr/local/etc/eudatL2.conf')
@@ -75,14 +78,28 @@ class B2SHAREClient(object):
 
     def create_draft(self, json_object):
         url = self.url + "/api/records/?access_token=" + self.token
-        r = requests.post(url, data=json_object)
-        return r.json() if (r.status_code == requests.codes.ok) else None
+        headers= { 'Content-Type' : 'application/json' }
+        r = requests.post(url, data=json_object, headers=headers)
+        if (r.status_code == requests.codes.ok):
+            return r.json()
+        else:
+            logging.warning('create_draft returned status code: %d', r.status_code)
+            return None
         
 
-    def put_draft_file(self, draft_id, file_id):
+    def put_draft_file(self, filebucket_url, file_name):
         # Implement me!
-        return
-
+        url = filebucket_url + "/" + basename(file_name) + "?access_token=" + self.token
+        headers= { 'Accept': 'application/json', 'Content-Type' : 'application/octet-stream' }
+        with open(file_name,'rb') as fid:
+            r=requests.put(url, headers=headers, data=fid)
+            if (r.status_code == requests.codes.ok):
+                return r.json()
+            else:
+                logging.warning('put_draft_file returned status code: %d', r.status_code)
+                return None
+        
+            
     def get_drafts(self):
         url = self.url + "/api/records/?q=community:" + self.community_id + "&drafts=1&q=publication_state:draft&access_token=" + self.token
         r = requests.get(url, verify=self.cert_verify)
