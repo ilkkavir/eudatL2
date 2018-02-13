@@ -73,10 +73,14 @@ class B2SHAREClient(object):
         r = requests.get(url, verify=self.cert_verify)
         return r.json() if (r.status_code == requests.codes.ok) else None
 
-    def create_draft(self):
-        return
+    def create_draft(self, json_object):
+        url = self.url + "/api/records/?access_token=" + self.token
+        r = requests.post(url, data=json_object)
+        return r.json() if (r.status_code == requests.codes.ok) else None
+        
 
-    def put_draft_file(self):
+    def put_draft_file(self, draft_id, file_id):
+        # Implement me!
         return
 
     def get_drafts(self):
