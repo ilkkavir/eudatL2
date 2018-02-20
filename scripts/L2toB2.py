@@ -35,26 +35,17 @@ if __name__=='__main__':
     verbose=config.getboolean("Main","verbose")
         
     ## parse arguments
+    if len(sys.argv) != 7:
+        print("Usage: %s year1 month1 day1 year2 day2 month2" % (sys.argv[0]))
+        exit(1)
+        
+    byear=int(sys.argv[1])
+    bmonth=int(sys.argv[2])
+    bday=int(sys.argv[3])
 
-    #--debug B2 client
-    byear=2014
-    bmonth=4
-    bday=2
-    eyear=2014
-    emonth=4
-    eday=2
-    
-    #--if len(sys.argv) != 7:
-    #--    print("Usage: %s year1 month1 day1 year2 day2 month2" % (sys.argv[0]))
-    #--    exit(1)
-
-    #--byear=int(sys.argv[1])
-    #--bmonth=int(sys.argv[2])
-    #--bday=int(sys.argv[3])
-
-    #--eyear=int(sys.argv[4])
-    #--emonth=int(sys.argv[5])
-    #--eday=int(sys.argv[6])
+    eyear=int(sys.argv[4])
+    emonth=int(sys.argv[5])
+    eday=int(sys.argv[6])
                 
     outpath=config.get("Main","outDir")
                 

@@ -20,15 +20,14 @@ class B2Entry:
 
         ## Hourly HDF5 file writer
         # debugging B2share routines: use an existing HDF file
-        #-- from B2fileroutines import fileroutines
-        #-- outFile=fileroutines.Fileroutines(self.verbose).B2file(args)
-        outFile='/data/eudat/2014-02-04/238426-beata_zenith_2.0v_CP_vhf-20140402_07.hdf5'
+        from B2fileroutines import fileroutines
+        outFile=fileroutines.Fileroutines(self.verbose).B2file(args)
         
         ## Create a B2SHARE record for this file?
         if self.config.getboolean('B2','b2share_entry'):
             
             from B2SHAREClient import B2SHAREClient,EISCATmetadata
-            from json import loads
+            from json import dumps
             ## Set up one client instance 
             client=B2SHAREClient.B2SHAREClient(community_id=self.config.get('B2','community'), url=self.config.get('B2','b2share_url'),token=self.config.get('B2','token') )
 
@@ -38,10 +37,10 @@ class B2Entry:
 
             # Create the B2SHARE entry
             draft_json=client.create_draft(basic_json)            
-            
+
             # Insert community metadata
             client.update_draft(draft_json, json_patch)
 
             # Insert file
-            if 'file' in draft_json.keys:
-                client.upload_file(draft_json['files'], outFile)
+            #if 'files' in draft_json['links'].keys:
+            #   client.put_draft_file(draft_json['files'], outFile)

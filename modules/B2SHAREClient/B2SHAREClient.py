@@ -87,18 +87,20 @@ class B2SHAREClient(object):
             return None
         
 
-    def put_draft_file(self, filebucket_url, file_name):
+    def put_draft_file(self, filebucket_url, file_list):
         
         url = filebucket_url + "/" + basename(file_name) + "?access_token=" + self.token
         headers= { 'Accept': 'application/json', 'Content-Type' : 'application/octet-stream' }
-        with open(file_name,'rb') as fid:
-            r=requests.put(url, headers=headers, data=fid)
-            if (r.status_code == requests.codes.ok):
-                return r.json()
-            else:
-                logging.warning('put_draft_file returned status code: %d', r.status_code)
-                return None
-        
+        out=[]
+        for file_name in file_list:
+            with open(file_name,'rb') as fid:
+                r=requests.put(url, headers=headers, data=fid)
+                if (r.status_code == requests.codes.ok):
+                    out.append(r.json())
+                else:
+                    logging.warning('put_draft_file returned status code: %d', r.status_code)
+
+        return out
             
     def get_drafts(self):
         url = self.url + "/api/records/?q=community:" + self.community_id + "&drafts=1&q=publication_state:draft&access_token=" + self.token
@@ -179,12 +181,13 @@ class B2SHAREClient(object):
             return None
 
         url = self.url + "/api/records/" + draft['id'] + "/draft?access_token=" + self.token
-        # url = self.url + "/api/records/" + draft['id'] + "?access_token=" + self.token
-        headers = {'Content-Type': 'application/json-patch+json', 'Accept': 'application/json'}
+        headers = {'Content-Type': 'application/json-patch+json'}
 
+        print("the patch is: ")
+        print(json_patch)
+        
         r = requests.patch(url, data=json_patch, headers=headers, verify=self.cert_verify)
         if r.status_code == requests.codes.ok:
-            # return_url = self.url + "/records/" + draft['id'] + "/edit"
             return_url = self.url + "/records/" + draft['id']
             logging.debug('draft %s: return url: %s', draft['id'], return_url)
             return return_url
