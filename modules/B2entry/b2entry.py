@@ -40,8 +40,7 @@ class B2Entry:
             draft_json=client.create_draft(basic_json)            
             
             # Insert community metadata
-            print(draft_json['id'])
-            client.update_draft(draft_json['id'], json_patch)
+            client.update_draft(draft_json, json_patch)
 
             # Insert file
             if 'file' in draft_json.keys:
