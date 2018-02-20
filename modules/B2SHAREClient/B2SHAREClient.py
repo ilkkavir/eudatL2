@@ -80,7 +80,7 @@ class B2SHAREClient(object):
         url = self.url + "/api/records/?access_token=" + self.token
         headers= { 'Content-Type' : 'application/json' }
         r = requests.post(url, data=json_object, headers=headers)
-        if (r.status_code == requests.codes.ok):
+        if (r.status_code == requests.codes.created):
             return r.json()
         else:
             logging.warning('create_draft returned status code: %d', r.status_code)
@@ -88,7 +88,7 @@ class B2SHAREClient(object):
         
 
     def put_draft_file(self, filebucket_url, file_name):
-        # Implement me!
+        
         url = filebucket_url + "/" + basename(file_name) + "?access_token=" + self.token
         headers= { 'Accept': 'application/json', 'Content-Type' : 'application/octet-stream' }
         with open(file_name,'rb') as fid:

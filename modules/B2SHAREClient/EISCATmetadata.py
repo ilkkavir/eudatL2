@@ -1,6 +1,12 @@
-### Create a JSON patch of community metadata.
+""" Create JSON objects from metadata.
 
-## args:  ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath]
+Inputs: args (packed arguments from subprocess), output file URL, UUIDs
+Outputs: JSON objects: basic entry (string), community metadata (JSON Patch object as string)
+
+
+  basic_json, community_json = MetaDataPatch(args, out_file_url, community_uuid, community_specific_id)([ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath],
+  out_file_url, community_uuid, community_specific_id)
+"""
 
 ## Metadata schema
 # {
@@ -117,7 +123,7 @@ def MetaDataPatch(args, out_file_url, community_uuid, community_specific_id):
     
     
     ## Build initial JSON for create_draft
-    draft_json = u'{"titles":[{"title":"%s"}], "community":"%s", "open_access":false, "community_specific": {}}' % (expname + " " + antenna + " " + startTime, community_uuid)
+    basic_json = u'{"titles":[{"title":"%s"}], "community":"%s", "open_access":false, "community_specific": {}}' % (expname + " " + antenna + " " + startTime, community_uuid)
     
 
     ## Build the patch of EISCAT specific metadata for update_draft
@@ -201,4 +207,4 @@ def MetaDataPatch(args, out_file_url, community_uuid, community_specific_id):
     json_patch_list.append(json_patch)
 
     ## Ready.
-    return JsonPatch(json_patch_list).to_string()
+    return(basic_json, JsonPatch(json_patch_list).to_string())
