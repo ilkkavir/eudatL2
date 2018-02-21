@@ -38,6 +38,6 @@ class B2Entry:
             # Create the B2SHARE entry
             draft_json=client.create_draft(metadata_json)            
             
-            Insert file
+            # Insert file
             if 'files' in draft_json['links'].keys:
                 client.put_draft_file(draft_json['files'], outFile)
