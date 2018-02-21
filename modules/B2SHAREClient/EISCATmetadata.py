@@ -115,7 +115,7 @@ def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
     
     infoPath = args[7]
     
-    # Fixme read from somewhere
+    # FIXME: read from somewhere
     stnLat = {'uhf': 69.58, 'vhf': 69.58, 'hf': 69.58, 'kir': 67.87, 'sod': 67.37 , '32m': 78.15, '32p': 78.15, '42m': 78.15 }
     stnLong = {'uhf': 19.23, 'vhf': 19.23, 'hf': 19.23, 'kir': 20.43, 'sod': 26.63, '32m': 16.02, '32p': 16.02, '42m': 16.02 }
     latitude = stnLat[antenna.lower()]
@@ -124,70 +124,67 @@ def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
     
     ## Build JSON metadata object
     draft_json={}
-    
+
+    # Draft title
     draft_json.update({ "titles": [ { "title": expname + " " + antenna + " " + startTime } ], "community": community_uuid })
 
+    # One Creators entry
     # FIXME: read from config
     draft_json.update({ "creators" : [ {"creator_name": "EISCAT Scientific Association"} ] })
 
+    # License
     # FIXME: read from config
     draft_json.update({ "license": { "license": "EISCAT Rules of the Road", "license_uri": "https://www.eiscat.se/scientist/data/#rules" } })
 
-        
+    # Email address
     # FIXME: read from config
     draft_json.update({ "contact_email": "carl-fredrik.enell@eiscat.se" })
 
-    
+    # Description text
     draft_json.update({ "descriptions": [ {"description": expname + " Level 2 data from EISCAT " + antenna, "description_type": "Abstract" } ] })
                       
-    
-    draft_json.update({ "embargo_date": embargoTime })
+    # Embargo
+    # FIXME only if in future
+    draft_json.update({ "open_access":False, "embargo_date": embargoTime })
 
-    
+    # Disciplines and keywords
     draft_json.update({ "disciplines": [ "3.4.12 \u2192 Physics \u2192 Geophysics", "3.5 \u2192 Natural sciences \u2192 Space sciences"], "keywords": [ "Radar", "Incoherent scatter", "Ionosphere" ] })
 
-    
+    # Type (Level 2)
     draft_json.update({ "resource_types": [ {"resource_type": "EISCAT Level 2 data", "resource_type_general": "Collection"} ] })
 
-    
+    # URLs to data in collection
+    # FIXME: allow multiple
     draft_json.update( { "alternate_identifiers": [ { "alternate_identifier": out_file_url, "alternate_identifier_type": "URL" } ] } )
 
    
     ## Community-specific metadata
-    eiscat_json={}
+    community_json={}
                 
-    eiscat_json.update({ "experiment_id": expid, "start_time": startTime, "end_time": endTime })
+    community_json.update({ "experiment_id": expid, "start_time": startTime, "end_time": endTime })
 
-    eiscat_json.update({ "account": assoc, "account_info": resource  })
-
-    
-    # Fixme; multiple antennas?
-    eiscat_json.update("antenna": [ antenna ] }
-
-    ## cont here
-    
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/latitude" , "value":  latitude }
+    community_json.update({ "account": assoc, "account_info": resource  })
 
     
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/longitude" , "value": longitude }
+    # FIXME: allow multiple antennas
+    community_json.update({ "antenna": [ antenna ] })
+
+    # Position
+    community_json.update({ "latitude":  latitude, "longitude": longitude })
 
     
-        
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/info_directory_url" , "value": infoPath }
+    # Info location
+    community_json.update({ "info_directory_url": infoPath })
 
-    
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/version" , "value": expver  }
+    # Experiment version
+    community_json.update({ "version": expver  })
 
+    # FIXME: check if RawData are available, etc
+    community_json.update({ "parameters": [ "LagProfile", "ParameterBlock" ] })
 
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/parameters" , "value": [ "LagProfile", "RawPower" ] }
+    ## Insert community specific metadata in B2 metadata
+    draft_json.update({ "community_specific": { community_specific_id: community_json } })
 
-    
-
-    community_json={ "community_specific": { community_specific_id: eiscat_json } }
-
-    draft_json.update(community_json)
-    
+    ## Return JSON object
     draft_json=json.dumps(draft_json,sort_keys=False)
-    
-    ## Ready.
     return(draft_json)
