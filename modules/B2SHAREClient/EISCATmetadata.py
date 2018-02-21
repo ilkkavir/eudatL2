@@ -99,11 +99,20 @@ def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
     import json
     
     ## EISCAT metadata from args
-    expid=args[0]
+    expid=str(args[0])
     expname = dspname.DSPname(args[1]).dsp()
     expver =  dspname.DSPname(args[1]).ver()
     assoc = dspname.DSPname(args[1]).cc().upper() # Fixme: take multiple entries from resource if exists
+    assoc=assoc.replace("GE","DE")
+    assoc=assoc.replace("NI","JP")
+    assoc=assoc.replace("SW","SE")
+    
     antenna = args[2]
+
+    antMap={"uhf":"UHF", "vhf":"VHF", "kir":"KIR", "sod":"SOD", "hf":"HF", "32m":"32m", "32p":"32p", "42m":"42m" }
+
+    antenna=antMap[antenna]
+    
     resource = args[3]
     
     startTime = args[4].strftime('%Y-%m-%dT%H:%M:%S')
@@ -116,10 +125,10 @@ def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
     infoPath = args[7]
     
     # FIXME: read from somewhere
-    stnLat = {'uhf': 69.58, 'vhf': 69.58, 'hf': 69.58, 'kir': 67.87, 'sod': 67.37 , '32m': 78.15, '32p': 78.15, '42m': 78.15 }
-    stnLong = {'uhf': 19.23, 'vhf': 19.23, 'hf': 19.23, 'kir': 20.43, 'sod': 26.63, '32m': 16.02, '32p': 16.02, '42m': 16.02 }
-    latitude = stnLat[antenna.lower()]
-    longitude = stnLong[antenna.lower()]
+    stnLat = {'UHF': '69.58', 'VHF': '69.58', 'HF': '69.58', 'KIR': '67.87', 'SOD': '67.37' , '32m': '78.15', '32p': '78.15', '42m': '78.15' }
+    stnLong = {'UHF': '19.23', 'VHF': '19.23', 'HF': '19.23', 'KIR': '20.43', 'SOD': '26.63', '32m': '16.02', '32p': '16.02', '42m': '16.02' }
+    latitude = stnLat[antenna]
+    longitude = stnLong[antenna]
  
     
     ## Build JSON metadata object
@@ -163,7 +172,8 @@ def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
                 
     community_json.update({ "experiment_id": expid, "start_time": startTime, "end_time": endTime })
 
-    community_json.update({ "account": assoc, "account_info": resource  })
+    # FIXME: multiple associates 
+    community_json.update({ "account": [ assoc ], "account_info": resource  })
 
     
     # FIXME: allow multiple antennas

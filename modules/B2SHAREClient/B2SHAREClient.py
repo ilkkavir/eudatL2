@@ -89,11 +89,11 @@ class B2SHAREClient(object):
 
     def put_draft_file(self, filebucket_url, file_list):
         
-        url = filebucket_url + "/" + basename(file_name) + "?access_token=" + self.token
         headers= { 'Accept': 'application/json', 'Content-Type' : 'application/octet-stream' }
         out=[]
         for file_name in file_list:
             with open(file_name,'rb') as fid:
+                url = filebucket_url + "/" + basename(file_name) + "?access_token=" + self.token
                 r=requests.put(url, headers=headers, data=fid)
                 if (r.status_code == requests.codes.ok):
                     out.append(r.json())

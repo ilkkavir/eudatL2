@@ -21,23 +21,26 @@ class B2Entry:
         ## Hourly HDF5 file writer
         # debugging B2share routines: use an existing HDF file
         from B2fileroutines import fileroutines
+              
         outFile=fileroutines.Fileroutines(self.verbose).B2file(args)
         
         ## Create a B2SHARE record for this file?
         if self.config.getboolean('B2','b2share_entry'):
             
             from B2SHAREClient import B2SHAREClient,EISCATmetadata
-            from json import dumps
+
             ## Set up one client instance 
             client=B2SHAREClient.B2SHAREClient(community_id=self.config.get('B2','community'), url=self.config.get('B2','b2share_url'),token=self.config.get('B2','token') )
 
             ## Create a draft
             # Format JSON metadata
-            metadata_json = EISCATmetadata.MetaDataPatch(args, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community'), self.config.get('B2','community_specific'))
+            metadata_json = EISCATmetadata.MetaDataJSON(args, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community'), self.config.get('B2','community_specific'))
 
             # Create the B2SHARE entry
             draft_json=client.create_draft(metadata_json)            
-            
-            # Insert file
-            if 'files' in draft_json['links'].keys:
-                client.put_draft_file(draft_json['files'], outFile)
+                
+            # Test insert file (DONT USE for Level 2)!
+            #if 'files' in draft_json['links'].keys():
+            #    print(outFile)
+            #    client.put_draft_file(draft_json['links']['files'], [ outFile ])
+                
