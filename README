@@ -12,9 +12,7 @@ This package is intended to
 1. Dependencies
 - Python 3.x with standard libraries
 
-- Other Python3 libraries: MySQLdb,  h5py, NumPy, SciPy, cmath
-
-- json (??which??)
+- Other Python3 libraries: MySQLdb,  h5py, NumPy, SciPy, cmath, json
 
 
 2. Check configuration settings
@@ -25,4 +23,5 @@ python3 setup.py install
 
 4. Usage example
 
-To add!!
+L2toB2 2014 1 1 2014 1 2
+

@@ -33,14 +33,11 @@ class B2Entry:
 
             ## Create a draft
             # Format JSON metadata
-            (basic_json, json_patch) = EISCATmetadata.MetaDataPatch(args, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community'), self.config.get('B2','community_specific'))
+            metadata_json = EISCATmetadata.MetaDataPatch(args, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community'), self.config.get('B2','community_specific'))
 
             # Create the B2SHARE entry
-            draft_json=client.create_draft(basic_json)            
-
-            # Insert community metadata
-            client.update_draft(draft_json, json_patch)
-
-            # Insert file
-            #if 'files' in draft_json['links'].keys:
-            #   client.put_draft_file(draft_json['files'], outFile)
+            draft_json=client.create_draft(metadata_json)            
+            
+            Insert file
+            if 'files' in draft_json['links'].keys:
+                client.put_draft_file(draft_json['files'], outFile)
