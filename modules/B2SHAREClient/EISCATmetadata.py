@@ -4,7 +4,7 @@ Inputs: args (packed arguments from subprocess), output file URL, UUIDs
 Outputs: JSON objects: basic entry (string), community metadata (JSON Patch object as string)
 
 
-  basic_json, community_json = MetaDataPatch(args, out_file_url, community_uuid, community_specific_id)([ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath],
+ draft_json = MetaDataJSON(args, out_file_url, community_uuid, community_specific_id)([ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath],
   out_file_url, community_uuid, community_specific_id)
 """
 
@@ -92,11 +92,11 @@ Outputs: JSON objects: basic entry (string), community metadata (JSON Patch obje
 #     }
 # }
 # 
-def MetaDataPatch(args, out_file_url, community_uuid, community_specific_id):
+def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
     
-    from jsonpatch import JsonPatch
     from B2fileroutines import dspname
     from datetime import timedelta
+    import json
     
     ## EISCAT metadata from args
     expid=args[0]
@@ -120,91 +120,74 @@ def MetaDataPatch(args, out_file_url, community_uuid, community_specific_id):
     stnLong = {'uhf': 19.23, 'vhf': 19.23, 'hf': 19.23, 'kir': 20.43, 'sod': 26.63, '32m': 16.02, '32p': 16.02, '42m': 16.02 }
     latitude = stnLat[antenna.lower()]
     longitude = stnLong[antenna.lower()]
+ 
     
+    ## Build JSON metadata object
+    draft_json={}
     
-    ## Build initial JSON for create_draft
-    basic_json = u'{"titles":[{"title":"%s"}], "community":"%s", "open_access":false, "community_specific": {}}' % (expname + " " + antenna + " " + startTime, community_uuid)
-    
+    draft_json.update({ "titles": [ { "title": expname + " " + antenna + " " + startTime } ], "community": community_uuid })
 
-    ## Build the patch of EISCAT specific metadata for update_draft
-    json_patch_list=[]
-    json_patch={"op": "add", "path": "/creators/creator_name", "value": "EISCAT Scientific Association" }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/license/license", "value": "EISCAT Rules of the Road" }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/license/license_uri", "value": "https://www.eiscat.se/scientist/data/#rules" }
-    json_patch_list.append(json_patch)
-    
     # FIXME: read from config
-    json_patch={"op": "add", "path": "/contact_email", "value": "carl-fredrik.enell@eiscat.se" }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/descriptions/description", "value": expname + " Level 2 data from EISCAT " + antenna }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/descriptions/description_type", "value": "Abstract" }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/embargo_date", "value": embargoTime }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/disciplines", "value": [ "3.4.12 \u2192 Physics \u2192 Geophysics", "3.5 \u2192 Natural sciences \u2192 Space sciences" ] }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/keywords", "value": [ "Radar", "Incoherent scatter", "Ionosphere" ] }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/resource_types/resource_type", "value": "EISCAT Level 2 data"}
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/resource_types/resource_type_general", "value": "Collection"}
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/alternate_identifiers/alternate_identifier", "value": out_file_url }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/alternate_identifiers/alternate_identifier_type", "value": "URL" }
-    json_patch_list.append(json_patch)
-    
-    ## Community-specific metadata         
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/experiment_id" , "value": expid }
-    json_patch_list.append(json_patch)
-    
-        
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/start_time" , "value": startTime }
-    json_patch_list.append(json_patch)
-    
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/end_time" , "value": endTime }
-    json_patch_list.append(json_patch)
+    draft_json.update({ "creators" : [ {"creator_name": "EISCAT Scientific Association"} ] })
 
-    # Fixme: multiple codes to array?
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/account" , "value": assoc }
-    json_patch_list.append(json_patch)
+    # FIXME: read from config
+    draft_json.update({ "license": { "license": "EISCAT Rules of the Road", "license_uri": "https://www.eiscat.se/scientist/data/#rules" } })
+
+        
+    # FIXME: read from config
+    draft_json.update({ "contact_email": "carl-fredrik.enell@eiscat.se" })
+
     
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/account_info" , "value": resource }
-    json_patch_list.append(json_patch)
+    draft_json.update({ "descriptions": [ {"description": expname + " Level 2 data from EISCAT " + antenna, "description_type": "Abstract" } ] })
+                      
+    
+    draft_json.update({ "embargo_date": embargoTime })
+
+    
+    draft_json.update({ "disciplines": [ "3.4.12 \u2192 Physics \u2192 Geophysics", "3.5 \u2192 Natural sciences \u2192 Space sciences"], "keywords": [ "Radar", "Incoherent scatter", "Ionosphere" ] })
+
+    
+    draft_json.update({ "resource_types": [ {"resource_type": "EISCAT Level 2 data", "resource_type_general": "Collection"} ] })
+
+    
+    draft_json.update( { "alternate_identifiers": [ { "alternate_identifier": out_file_url, "alternate_identifier_type": "URL" } ] } )
+
+   
+    ## Community-specific metadata
+    eiscat_json={}
+                
+    eiscat_json.update({ "experiment_id": expid, "start_time": startTime, "end_time": endTime })
+
+    eiscat_json.update({ "account": assoc, "account_info": resource  })
+
     
     # Fixme; multiple antennas?
-    json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/antenna" , "value": [ antenna ] }
-    json_patch_list.append(json_patch)
+    eiscat_json.update("antenna": [ antenna ] }
+
+    ## cont here
     
     json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/latitude" , "value":  latitude }
-    json_patch_list.append(json_patch)
+
     
     json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/longitude" , "value": longitude }
-    json_patch_list.append(json_patch)
+
     
         
     json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/info_directory_url" , "value": infoPath }
-    json_patch_list.append(json_patch)
+
     
     json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/version" , "value": expver  }
-    json_patch_list.append(json_patch)
+
 
     json_patch={"op": "add", "path": "/community_specific/" + community_specific_id + "/parameters" , "value": [ "LagProfile", "RawPower" ] }
-    json_patch_list.append(json_patch)
 
+    
+
+    community_json={ "community_specific": { community_specific_id: eiscat_json } }
+
+    draft_json.update(community_json)
+    
+    draft_json=json.dumps(draft_json,sort_keys=False)
+    
     ## Ready.
-    return(basic_json, JsonPatch(json_patch_list).to_string())
+    return(draft_json)
