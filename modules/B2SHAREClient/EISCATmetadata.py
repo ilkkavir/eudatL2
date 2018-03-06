@@ -156,7 +156,7 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
     draft_json.update({ "contact_email": "carl-fredrik.enell@eiscat.se" })
 
     # Description text
-    draft_json.update({ "descriptions": [ {"description": expname + " Level 2 data from EISCAT " + antenna, "description_type": "Abstract" } ] })
+    draft_json.update({ "descriptions": [ {"description": expname + " Level " + str(eLevel) + " data from EISCAT " + antenna, "description_type": "Abstract" } ] })
                       
     # Embargo
     if embargoTime:
@@ -170,7 +170,6 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
     # Type (Level 2)
     if(eLevel < 3) : 
         draft_json.update({ "resource_types": [ {"resource_type": "EISCAT Level 2 data", "resource_type_general": "Collection"} ] })
-
     else:
         draft_json.update({ "resource_types": [ {"resource_type": "EISCAT Level 3 data", "resource_type_general": "Dataset"} ] })
         
