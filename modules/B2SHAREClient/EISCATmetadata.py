@@ -4,7 +4,7 @@ Inputs: args (packed arguments from subprocess), output file URL, UUIDs
 Outputs: JSON objects: basic entry (string), community metadata (JSON Patch object as string)
 
 
- draft_json = MetaDataJSON(args, out_file_url, community_uuid, community_specific_id)([ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath],
+ draft_json = MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_id)([ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath],
   out_file_url, community_uuid, community_specific_id)
 """
 
@@ -92,10 +92,10 @@ Outputs: JSON objects: basic entry (string), community metadata (JSON Patch obje
 #     }
 # }
 # 
-def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
+def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_id):
     
     from B2fileroutines import dspname
-    from datetime import timedelta
+    from datetime import timedelta, datetime
     import json
     
     ## EISCAT metadata from args
@@ -117,10 +117,16 @@ def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
     
     startTime = args[4].strftime('%Y-%m-%dT%H:%M:%S')
     endTime = args[5]
-    embargoTime = endTime + timedelta(1096)
-    
+
+    embargoTime = None
+    if (eLevel < 3):
+        embargo = endTime + timedelta(1096)
+        if embargo > datetime.datetime.utcnow():
+            embargoTime = embargo.strftime('%Y-%m-%dT%H:%M:%S')
+
+            
     endTime = endTime.strftime('%Y-%m-%dT%H:%M:%S')
-    embargoTime = embargoTime.strftime('%Y-%m-%dT%H:%M:%S')
+
     
     infoPath = args[7]
     
@@ -153,15 +159,21 @@ def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
     draft_json.update({ "descriptions": [ {"description": expname + " Level 2 data from EISCAT " + antenna, "description_type": "Abstract" } ] })
                       
     # Embargo
-    # FIXME only if in future
-    draft_json.update({ "open_access":False, "embargo_date": embargoTime })
-
+    if embargoTime:
+        draft_json.update({ "open_access":False, "embargo_date": embargoTime })
+    else:
+        draft_json.update({ "open_access":True })
+        
     # Disciplines and keywords
     draft_json.update({ "disciplines": [ "3.4.12 \u2192 Physics \u2192 Geophysics", "3.5 \u2192 Natural sciences \u2192 Space sciences"], "keywords": [ "Radar", "Incoherent scatter", "Ionosphere" ] })
 
     # Type (Level 2)
-    draft_json.update({ "resource_types": [ {"resource_type": "EISCAT Level 2 data", "resource_type_general": "Collection"} ] })
+    if(eLevel < 3) : 
+        draft_json.update({ "resource_types": [ {"resource_type": "EISCAT Level 2 data", "resource_type_general": "Collection"} ] })
 
+    else:
+        draft_json.update({ "resource_types": [ {"resource_type": "EISCAT Level 3 data", "resource_type_general": "Dataset"} ] })
+        
     # URLs to data in collection
     # FIXME: allow multiple
     draft_json.update( { "alternate_identifiers": [ { "alternate_identifier": out_file_url, "alternate_identifier_type": "URL" } ] } )

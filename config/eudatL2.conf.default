@@ -13,7 +13,11 @@ dbHost = <hostname>		# DB host
 dbUser = <username>		# DB user
 dbPass = <secret>		# DB password
 
+### Madrigal connection
+[Madrigal]
+URL = https://www.eiscat.se/madrigal
 ### B2SHARE API client configuration
+
 [B2]
 b2share_entry = True # Create B2share record or only local HDF5 file?
 b2share_url = https://trng-b2share.eudat.eu   	# Base URL of B2SHARE instance  

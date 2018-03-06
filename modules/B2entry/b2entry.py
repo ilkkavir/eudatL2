@@ -34,7 +34,7 @@ class B2Entry:
 
             ## Create a draft
             # Format JSON metadata
-            metadata_json = EISCATmetadata.MetaDataJSON(args, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community'), self.config.get('B2','community_specific'))
+            metadata_json = EISCATmetadata.MetaDataJSON(args, 2, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community'), self.config.get('B2','community_specific'))
 
             # Create the B2SHARE entry
             draft_json=client.create_draft(metadata_json)            
