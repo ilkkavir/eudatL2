@@ -131,8 +131,8 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
     infoPath = args[7]
     
     # FIXME: read from somewhere
-    stnLat = {'UHF': '69.58', 'VHF': '69.58', 'HF': '69.58', 'KIR': '67.87', 'SOD': '67.37' , '32m': '78.15', '32p': '78.15', '42m': '78.15' }
-    stnLong = {'UHF': '19.23', 'VHF': '19.23', 'HF': '19.23', 'KIR': '20.43', 'SOD': '26.63', '32m': '16.02', '32p': '16.02', '42m': '16.02' }
+    stnLat = {'UHF': '69.58', 'TRO': '69.58', 'VHF': '69.58', 'EIS': '69.58', 'HF': '69.58','HOT': '69.58', 'KIR': '67.87', 'SOD': '67.37' , '32m': '78.15', '32p': '78.15', '42m': '78.15', 'ESR': '78.15', 'LYR': '78.15'  }
+    stnLong = {'UHF': '19.23', 'TRO': '19.23', 'VHF': '19.23', 'EIS': '19.23', 'HF': '19.23', 'HOT': '19.23', 'KIR': '20.43', 'SOD': '26.63', '32m': '16.02', '32p': '16.02', '42m': '16.02', 'ESR': '16.02', 'LYR': '16.02' }
     latitude = stnLat[antenna]
     longitude = stnLong[antenna]
  
