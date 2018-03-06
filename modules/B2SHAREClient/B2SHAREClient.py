@@ -79,7 +79,7 @@ class B2SHAREClient(object):
     def create_draft(self, json_object):
         url = self.url + "/api/records/?access_token=" + self.token
         headers= { 'Content-Type' : 'application/json' }
-        r = requests.post(url, data=json_object, headers=headers)
+        r = requests.post(url, data=json_object, headers=headers, verify=self.cert_verify)
         if (r.status_code == requests.codes.created):
             return r.json()
         else:
@@ -94,7 +94,7 @@ class B2SHAREClient(object):
         for file_name in file_list:
             with open(file_name,'rb') as fid:
                 url = filebucket_url + "/" + basename(file_name) + "?access_token=" + self.token
-                r=requests.put(url, headers=headers, data=fid)
+                r = requests.put(url, headers=headers, data=fid, verify=self.cert_verify)
                 if (r.status_code == requests.codes.ok):
                     out.append(r.json())
                 else:

@@ -109,7 +109,7 @@ def MetaDataJSON(args, out_file_url, community_uuid, community_specific_id):
     
     antenna = args[2]
 
-    antMap={"uhf":"UHF", "vhf":"VHF", "kir":"KIR", "sod":"SOD", "hf":"HF", "32m":"32m", "32p":"32p", "42m":"42m" }
+    antMap={"uhf":"UHF", "vhf":"VHF", "kir":"KIR", "sod":"SOD", "hf":"HF", "32m":"32m", "32p":"32p", "42m":"42m", "lyr":"ESR" }
 
     antenna=antMap[antenna]
     
