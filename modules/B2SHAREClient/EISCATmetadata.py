@@ -101,7 +101,7 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
     ## EISCAT metadata from args
     expid=str(args[0])
     expname = dspname.DSPname(args[1]).dsp()
-    expver =  dspname.DSPname(args[1]).ver()
+    expver=None
     assoc=None
 
     if(eLevel < 3):
@@ -111,7 +111,9 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
         assoc=assoc.replace("GE","DE")
         assoc=assoc.replace("NI","JP")
         assoc=assoc.replace("SW","SE")
-    
+        # Version also relevant for L2 data
+        expver =  dspname.DSPname(args[1]).ver()
+        
     antenna = args[2]
 
     antMap={"uhf":"UHF", "vhf":"VHF", "kir":"KIR", "sod":"SOD", "hf":"HF", "32m":"32m", "32p":"32p", "42m":"42m", "lyr":"ESR" }
