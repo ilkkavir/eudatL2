@@ -222,3 +222,47 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
     ## Return JSON object
     draft_json=json.dumps(draft_json,sort_keys=False)
     return(draft_json)
+
+
+def ParamJSONpatch(exp_pars, community_specific_id):
+
+    import jsonpatch
+
+    patch_list=[]
+    par_map={
+        "PP":"RawPower", 
+        "NEL":"ElectronDensity", 
+        "TR":"ElectronTemperature", 
+        "TI":"IonTemperature", 
+        "VO":"IonDriftVelocity",
+        "VOBI":"IonDriftVelocity", 
+        "PO+":"IonCompositionO+", 
+        "COL":"IonNeutralCollisionFrequency"
+    }
+
+    err_map={
+        "DPP":"DRawPower", 
+        "DNEL":"DElectronDensity", 
+        "DTR":"DElectronTemperature", 
+        "DTI":"DIonTemperature", 
+        "DVO":"IonDriftVelocity",
+        "DVOBI":"IonDriftVelocity", 
+        "DPO+":"IonCompositionO+",
+        "DCOL":"IonNeutralCollisionFrequency"
+    }
+    
+        
+    for par in exp_pars:
+        
+        if par.name in par_map.keys():
+
+            patch='{"op":"add, "path":"/community_specific/" + community_specific_id + "/parameters", "value" :par_map[par_name] }'
+            patch_list.append(patch)
+
+            
+        if par.name in err_map.keys():
+            patch='{"op":"add, "path":"/community_specific/" + community_specific_id + "/parameter_errors", "value":err_map[par_name] }'
+            patch_list.append(patchjson)
+
+    
+    return jsonpatch.JsonPatch(patch_list).to_string()
