@@ -26,8 +26,8 @@ import smtplib
 from email.message import EmailMessage
 from urllib.parse import urlparse
 from datetime import datetime
+# import configuration
 from os.path import basename
-
 # import configuration
 from configparser import SafeConfigParser
 
@@ -36,6 +36,7 @@ configuration=SafeConfigParser()
 configuration.read('/usr/local/etc/eudatL2.conf')
 
 logging.basicConfig(filename=configuration.get('Log','log_file_path'), level=eval(configuration.get('Log','logging_level')))
+
 
 
 class B2SHAREClient(object):
@@ -78,29 +79,35 @@ class B2SHAREClient(object):
 
     def create_draft(self, json_object):
         url = self.url + "/api/records/?access_token=" + self.token
-        headers= { 'Content-Type' : 'application/json' }
+        headers = {'Content-Type': 'application/json'}
         r = requests.post(url, data=json_object, headers=headers, verify=self.cert_verify)
-        if (r.status_code == requests.codes.created):
+        if r.status_code == requests.codes.created:
             return r.json()
         else:
             logging.warning('create_draft returned status code: %d', r.status_code)
             return None
-        
 
-    def put_draft_file(self, filebucket_url, file_list):
-        
-        headers= { 'Accept': 'application/json', 'Content-Type' : 'application/octet-stream' }
-        out=[]
+    def put_draft_file(self, draft, file_list):
+        headers = {'Accept': 'application/json', 'Content-Type': 'application/octet-stream'}
+        upload_info = []
+
+        if draft is None:
+            logging.warning('No draft')
+            return upload_info
+
         for file_name in file_list:
-            with open(file_name,'rb') as fid:
-                url = filebucket_url + "/" + basename(file_name) + "?access_token=" + self.token
-                r = requests.put(url, headers=headers, data=fid, verify=self.cert_verify)
-                if (r.status_code == requests.codes.ok):
-                    out.append(r.json())
+            with open(file_name, 'rb') as fid:
+                if 'files' in draft['links']:
+                    url = draft['links']['files'] + "/" + basename(file_name) + "?access_token=" + self.token
+                else:
+                    logging.warning('draft: %s, no files link, returning', draft['id'])
+                    return upload_info
+                r = requests.put(url, headers=headers, verify=self.cert_verify, data=fid)
+                if r.status_code == requests.codes.ok:
+                    upload_info.append(r.json())
                 else:
                     logging.warning('put_draft_file returned status code: %d', r.status_code)
-
-        return out
+        return upload_info
             
     def get_drafts(self):
         url = self.url + "/api/records/?q=community:" + self.community_id + "&drafts=1&q=publication_state:draft&access_token=" + self.token
@@ -124,8 +131,9 @@ class B2SHAREClient(object):
                 raise
 
     def get_file(self, url_suffix):
+        # path = configuration.tmp_file_path + url_suffix
         path = configuration.get('Main','tempDir') + url_suffix
-
+        
         # a cached file, return the file path
         if os.path.isfile(path):
             return path
@@ -182,9 +190,6 @@ class B2SHAREClient(object):
 
         url = self.url + "/api/records/" + draft['id'] + "/draft?access_token=" + self.token
         headers = {'Content-Type': 'application/json-patch+json'}
-
-        print("the patch is: ")
-        print(json_patch)
         
         r = requests.patch(url, data=json_patch, headers=headers, verify=self.cert_verify)
         if r.status_code == requests.codes.ok:
@@ -205,6 +210,7 @@ class B2SHAREClient(object):
 
         logging.debug('draft %s, updated: %s, created: %s, "diff (s): %s', draft['id'], draft['updated'].split("+")[0], draft['created'].split("+")[0], difference.seconds)
 
+        #if difference.seconds < configuration.update_time_criteria:
         if difference.seconds < configuration.getint('B2','update_time_criteria'):
             return True
         else:
@@ -237,12 +243,16 @@ class B2SHAREClient(object):
         msg = EmailMessage()
         msg.set_content(url_text)
 
+        # msg['Subject'] = configuration.notification_subject
+        # msg['From'] = configuration.notification_from
         msg['Subject'] = configuration.get('B2','notification_subject')
         msg['From'] = configuration.get('B2','notification_from')
-
-        for dest in configuration.get('B2','notification_to_list'):
+        
+        for dest in configuration.notification_to_list:
             msg['To'] = dest
+            # s = smtplib.SMTP(configuration.smtp_server_hostname)
             s = smtplib.SMTP(configuration.get('B2','smtp_server_hostname'))
             s.set_debuglevel(1)
+            # s.sendmail(configuration.notification_from, dest, msg.as_string())
             s.sendmail(configuration.get('B2','notification_from'), dest, msg.as_string())
             s.quit()
