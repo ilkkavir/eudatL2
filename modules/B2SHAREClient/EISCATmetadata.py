@@ -180,28 +180,34 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
    
     ## Community-specific metadata
     community_json={}
-                
-    community_json.update({ "experiment_id": expid, "start_time": startTime, "end_time": endTime })
 
-    # FIXME: multiple associates 
-    community_json.update({ "account": [ assoc ], "account_info": resource  })
+    if(startTime):
+        community_json.update({ "experiment_id": expid, "start_time": startTime, "end_time": endTime })
+
+    # FIXME: multiple associates
+    if(assoc):
+        community_json.update({ "account": [ assoc ], "account_info": resource  })
 
     
     # FIXME: allow multiple antennas
-    community_json.update({ "antenna": [ antenna ] })
+    if(antenna):
+        community_json.update({ "antenna": [ antenna ] })
 
     # Position
     community_json.update({ "latitude":  latitude, "longitude": longitude })
 
     
     # Info location
-    community_json.update({ "info_directory_url": infoPath })
+    if(infoPath):
+        community_json.update({ "info_directory_url": infoPath })
 
     # Experiment version
-    community_json.update({ "version": expver  })
+    if(expver):
+        community_json.update({ "version": expver  })
 
     # FIXME: check if RawData are available, etc
-    community_json.update({ "parameters": [ "LagProfile", "ParameterBlock" ] })
+    if(eLevel < 3):
+        community_json.update({ "parameters": [ "LagProfile", "ParameterBlock" ] })
 
     ## Insert community specific metadata in B2 metadata
     draft_json.update({ "community_specific": { community_specific_id: community_json } })
