@@ -253,15 +253,15 @@ def ParamJSONpatch(exp_pars, community_specific_id):
     
         
     for par in exp_pars:
-        
+
         if par.name in par_map.keys():
 
-            patch='{"op":"add, "path":"/community_specific/" + community_specific_id + "/parameters", "value" :par_map[par_name] }'
+            patch='{"op":"add, "path":"/community_specific/" + community_specific_id + "/parameters", "value" :par_map[par.name] }'
             patch_list.append(patch)
 
             
         if par.name in err_map.keys():
-            patch='{"op":"add, "path":"/community_specific/" + community_specific_id + "/parameter_errors", "value":err_map[par_name] }'
+            patch='{"op":"add, "path":"/community_specific/" + community_specific_id + "/parameter_errors", "value":err_map[par.name] }'
             patch_list.append(patchjson)
 
     
