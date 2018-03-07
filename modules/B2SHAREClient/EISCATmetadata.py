@@ -254,15 +254,16 @@ def ParamJSONpatch(exp_pars, community_specific_id):
         
     for par in exp_pars:
 
-        if par.name in par_map.keys():
-
-            patch='{"op":"add, "path":"/community_specific/" + community_specific_id + "/parameters", "value" :par_map[par.name] }'
-            patch_list.append(patch)
+        if par.mnemonic in par_map.keys():
+            if par.isMeasured:
+                patch='{"op":"add, "path":"/community_specific/%s/parameters", "value" : "%s" }' % (community_specific_id, par_map[par.mnemonic])
+                patch_list.append(patch)
 
             
-        if par.name in err_map.keys():
-            patch='{"op":"add, "path":"/community_specific/" + community_specific_id + "/parameter_errors", "value":err_map[par.name] }'
-            patch_list.append(patchjson)
+        if par.mnemonic in err_map.keys():
+            if par.isError:
+                patch='{"op":"add, "path":"/community_specific/%s/parameter_errors", "value": "%s" }' % (community_specific_id, err_map[par.mnemonic])
+                patch_list.append(patch)
 
     
     return jsonpatch.JsonPatch(patch_list).to_string()
