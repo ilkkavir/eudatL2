@@ -102,10 +102,15 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
     expid=str(args[0])
     expname = dspname.DSPname(args[1]).dsp()
     expver =  dspname.DSPname(args[1]).ver()
-    assoc = dspname.DSPname(args[1]).cc().upper() # Fixme: take multiple entries from resource if exists
-    assoc=assoc.replace("GE","DE")
-    assoc=assoc.replace("NI","JP")
-    assoc=assoc.replace("SW","SE")
+    assoc=None
+
+    if(eLevel < 3):
+        # this may be embargoed data
+        # Fixme: take multiple entries from resource if exists
+        assoc = dspname.DSPname(args[1]).cc().upper() 
+        assoc=assoc.replace("GE","DE")
+        assoc=assoc.replace("NI","JP")
+        assoc=assoc.replace("SW","SE")
     
     antenna = args[2]
 
