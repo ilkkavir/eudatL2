@@ -245,10 +245,10 @@ def ParamJSONpatch(exp_pars, community_specific_id):
         "DNEL":"DElectronDensity", 
         "DTR":"DElectronTemperature", 
         "DTI":"DIonTemperature", 
-        "DVO":"IonDriftVelocity",
-        "DVOBI":"IonDriftVelocity", 
-        "DPO+":"IonCompositionO+",
-        "DCOL":"IonNeutralCollisionFrequency"
+        "DVO":"DIonDriftVelocity",
+        "DVOBI":"DIonDriftVelocity", 
+        "DPO+":"DIonCompositionO+",
+        "DCOL":"DIonNeutralCollisionFrequency"
     }
     
         
