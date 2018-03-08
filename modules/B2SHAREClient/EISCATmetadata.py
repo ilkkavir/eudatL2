@@ -128,7 +128,8 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
     embargoTime = None
     if (eLevel < 3):
         embargo = endTime + timedelta(1096)
-        if embargo > datetime.datetime.utcnow():
+
+        if embargo > datetime.utcnow():
             embargoTime = embargo.strftime('%Y-%m-%dT%H:%M:%S')
 
             
