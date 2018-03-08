@@ -1,3 +1,4 @@
+### Common configuration for the packages eudatL2 and eudatL3
 ### Basic configuration
 [Main]
 baseURI = eiscat-raid://data1 # Internal RAID URI
@@ -9,28 +10,30 @@ maxproc = 4 		      # Max number of parallel processes to run
 ### Directory catalogue DB configuration
 [DB]
 db = disk_archive		# Name of SQL DB
-dbHost = <hostname>		# DB host
-dbUser = <username>		# DB user
-dbPass = <secret>		# DB password
+dbHost = 		# DB host
+dbUser = 		# DB user
+dbPass = 		# DB password
 
 ### Madrigal connection
 [Madrigal]
 URL = https://www.eiscat.se/madrigal
-### B2SHARE API client configuration
 
+### B2SHARE API client configuration
 [B2]
 b2share_entry = True # Create B2share record or only local HDF5 file?
-b2share_url = https://trng-b2share.eudat.eu   	# Base URL of B2SHARE instance  
-local_base_url = https://b2.eiscat.se/L2		# Base URL to HDF5 files in outDir 
-community = b344f92a-cd0e-4e4c-aa09-28b5f95f7e41	     	# EISCAT community UUID
-community_specific = cee77dd0-9149-4a7b-9c28-85a8f7052bd9 	# UUID of EISCAT community-specific schema      
-token = <secret> # B2SHARE Access token
+b2share_url = https://trng-b2share.eudat.eu   	     # Base URL of B2SHARE instance
+# b2share_url = https://eudat-b2share-test.csc.fi    # Base URL of B2SHARE instance
+token =   # B2SHARE Access token
+
+local_base_url = https://b2.eiscat.se/L2			# Base URL to HDF5 files in outDir 
+community = b344f92a-cd0e-4e4c-aa09-28b5f95f7e41	     	# Community UUID
+community_specific = cee77dd0-9149-4a7b-9c28-85a8f7052bd9 	# UUID of community-specific schema      
 update_time_criteria = 30
 ## Email notification
 notification_subject = [B2SHARE Client] Records updated
 notification_from = b2@eiscat.se
 notification_to_list = [ "jani.heikkinen@csc.fi" ]
-smtp_server_hostname = <mailserver name>
+smtp_server_hostname = www.eiscat.se
 
 ### Logging configuration (todo: add logging)
 [Log]

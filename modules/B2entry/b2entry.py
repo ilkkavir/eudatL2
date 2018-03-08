@@ -13,7 +13,7 @@ class B2Entry:
 
         from configparser import SafeConfigParser
         self.config=SafeConfigParser(inline_comment_prefixes={'#'})
-        self.config.read('/usr/local/etc/eudatL2.conf')
+        self.config.read('/usr/local/etc/eudat.conf')
         self.verbose=self.config.getboolean('Main','verbose')
         
     def __call__(self,args):

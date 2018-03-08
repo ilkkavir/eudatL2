@@ -94,7 +94,7 @@ class Fileroutines:
 
             # Tar info dir to temporary file
             config=SafeConfigParser(inline_comment_prefixes={'#'})
-            config.read('/usr/local/etc/eudatL2.conf')
+            config.read('/usr/local/etc/eudat.conf')
             baseURI=config.get("Main","baseURI")
             tmpdir=config.get("Main","tempDir")
     

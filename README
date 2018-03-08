@@ -16,7 +16,7 @@ This package is intended to
 
 
 2. Check configuration settings
-Copy default configuration file to config/eudatL2.conf and modify.
+Copy default configuration file to config/eudat.conf and modify.
 
 3. Install
 python3 setup.py install

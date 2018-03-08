@@ -33,7 +33,7 @@ from configparser import SafeConfigParser
 
 
 configuration=SafeConfigParser()
-configuration.read('/usr/local/etc/eudatL2.conf')
+configuration.read('/usr/local/etc/eudat.conf')
 
 logging.basicConfig(filename=configuration.get('Log','log_file_path'), level=eval(configuration.get('Log','logging_level')))
 

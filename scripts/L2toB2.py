@@ -29,7 +29,7 @@ from B2entry import b2entry
 if __name__=='__main__':
 
     config=SafeConfigParser(inline_comment_prefixes={'#'})    
-    config.read('/usr/local/etc/eudatL2.conf')
+    config.read('/usr/local/etc/eudat.conf')
 
     baseURI=config.get("Main","baseURI")
     verbose=config.getboolean("Main","verbose")
