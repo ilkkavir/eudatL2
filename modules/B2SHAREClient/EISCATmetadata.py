@@ -226,9 +226,43 @@ def MetaDataJSON(args, eLevel, out_file_url, community_uuid, community_specific_
 
 def ParamJSONpatch(exp_pars, community_specific_id):
 
+    ## JSON patch for adding parameters.
+    ##
+    ## Template:
+    ##
+    ## [
+    ##   {
+    ##     "op":"add",
+    ##     "path":"/community_specific/cee77dd0-9149-4a7b-9c28-85a8f7052bd9/parameters",
+    ##     "value" : [
+    ##         "IonCompositionO+",
+    ##         "ElectronDensity",
+    ##         "IonTemperature",
+    ##         "ElectronTemperature",
+    ##         "IonNeutralCollisionFrequency",
+    ##         "IonDriftVelocity"
+    ##     ]
+    ##   },
+    ##   {
+    ##     "op":"add",
+    ##     "path":"/community_specific/cee77dd0-9149-4a7b-9c28-85a8f7052bd9/parameter_errors",
+    ##     "value": [
+    ##         "DElectronDensity",
+    ##         "DIonTemperature",
+    ##         "DElectronTemperature",
+    ##         "DIonNeutralCollisionFrequency",
+    ##         "DIonDriftVelocity"
+    ##     ]
+    ##   }
+    ## ]
+
     import jsonpatch
 
     patch_list=[]
+    par_list=[]
+    err_list=[]
+
+    ## Madrigal names to B2 schema names
     par_map={
         "PP":"RawPower", 
         "NEL":"ElectronDensity", 
@@ -251,19 +285,23 @@ def ParamJSONpatch(exp_pars, community_specific_id):
         "DCOL":"DIonNeutralCollisionFrequency"
     }
     
-        
+    ## Build parameter lists
     for par in exp_pars:
 
         if par.mnemonic in par_map.keys():
             if par.isMeasured:
-                patch='{"op":"add, "path":"/community_specific/%s/parameters", "value" : "%s" }' % (community_specific_id, par_map[par.mnemonic])
-                patch_list.append(patch)
+                par_list.append(par_map[par.mnemonic])
 
             
         if par.mnemonic in err_map.keys():
             if par.isError:
-                patch='{"op":"add, "path":"/community_specific/%s/parameter_errors", "value": "%s" }' % (community_specific_id, err_map[par.mnemonic])
-                patch_list.append(patch)
+                err_list.append(err_map[par.mnemonic])
 
-    
+    ## Build patch list
+    patch={"op": "add", "path": "/community_specific/" +  community_specific_id + "/parameters", "value": par_list }
+    patch_list.append(patch)
+
+    patch={"op": "add", "path": "/community_specific/" +  community_specific_id + "/parameter_errors", "value": err_list }
+    patch_list.append(patch)
+        
     return jsonpatch.JsonPatch(patch_list).to_string()
