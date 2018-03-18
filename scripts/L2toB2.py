@@ -73,11 +73,16 @@ if __name__=='__main__':
     qlist=[]
         
     with catalogquery.CatalogQuery(config) as DBq:
+
+        print("Querying for ")
+        print(t1)
+        print("to")
+        print(t2)
         eids = DBq.get_ids(t1,t2)
 
         # Get the exp locations
         for eid in eids:
-                        
+                                
             meta=DBq.get_meta(eid['experiment_id'])
             assert (len(meta)==1),  "Ambiguous: more than one entry for this expid"
 
@@ -93,6 +98,7 @@ if __name__=='__main__':
 
                 # find info directory
                 count=0
+                iloc={'location': ''}
                 iid=DBq.get_info_ids(eid['experiment_id'],midnight1,midnight2)
 
                 while len(iid)<1 and count < 5:
@@ -104,20 +110,21 @@ if __name__=='__main__':
                     iid=DBq.get_info_ids(eid['experiment_id'],midnight1,midnight2)
                     count=count+1                                                
 
-                    try:
+                    if len(iid)>0:
                         iid=iid[0]
                         iloc=DBq.get_locs(iid['resource_id'])
                         iloc=iloc[0]
-                    except:
-                        iloc={'location': ''}
-                                        
-                    resource=eid['account'] or meta['country']
-                    # remove eiscat-raid://host/ for  actual data path
-                    location=eloc['location'].replace(baseURI,'')
+                        break
+                        
+
+
+                resource=eid['account'] or meta['country']
+                # remove eiscat-raid://host/ for  actual data path
+                location=eloc['location'].replace(baseURI,'')
                     
-                    # Build array of arrays
-                    # [[ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath],...]
-                    qlist.append([eid['resource_id'],meta['experiment_name'],meta['antenna'],resource,eid['start'],eid['end'],location,iloc['location'],outpath])
+                # Build array of arrays
+                # [[ResID, ExpName, Antenna, Resource, DBStartTime, DBStopTime, Location, InfoPath, outPath],...]
+                qlist.append([eid['resource_id'],meta['experiment_name'],meta['antenna'],resource,eid['start'],eid['end'],location,iloc['location'],outpath])
 
 
     if len(qlist)==0:
