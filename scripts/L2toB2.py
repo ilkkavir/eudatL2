@@ -74,10 +74,6 @@ if __name__=='__main__':
         
     with catalogquery.CatalogQuery(config) as DBq:
 
-        print("Querying for ")
-        print(t1)
-        print("to")
-        print(t2)
         eids = DBq.get_ids(t1,t2)
 
         # Get the exp locations
@@ -85,8 +81,9 @@ if __name__=='__main__':
                                 
             meta=DBq.get_meta(eid['experiment_id'])
             assert (len(meta)==1),  "Ambiguous: more than one entry for this expid"
-
-            meta=meta[0]    
+            meta=meta[0]
+            resource=eid['account'] or meta['country']
+            
             elocs=DBq.get_locs(eid['resource_id'])                        
                         
             # Get all info resIDs                        
@@ -116,9 +113,6 @@ if __name__=='__main__':
                         iloc=iloc[0]
                         break
                         
-
-
-                resource=eid['account'] or meta['country']
                 # remove eiscat-raid://host/ for  actual data path
                 location=eloc['location'].replace(baseURI,'')
                     
