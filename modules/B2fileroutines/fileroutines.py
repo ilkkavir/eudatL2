@@ -123,8 +123,8 @@ class Fileroutines:
         ## Open HDF5 file for writing
         hourDirName=os.path.basename(dataDir.strip('/'))
         dayDirName=hourDirName.split('_')[0]
-        outFile=os.path.join(outputDir,dayDirName,str(resID) + '-' + expName + '_' + Antenna + '-' + hourDirName + '.hdf5')
-
+        outFileBase=os.path.join(dayDirName,str(resID) + '-' + expName + '_' + Antenna + '-' + hourDirName + '.hdf5') # URL part of filename
+        outFile=os.path.join(outputDir,outFileBase) # Full filesystem path
         if self.verbose:
             print("Writing to " + outFile)
 
@@ -281,6 +281,6 @@ class Fileroutines:
             if self.verbose:
                 print('Added info dir to user block of %s' % outFile)
 
-        # return name of written file
-        return outFile
+        # return URL part of filename
+        return outFileBase
 ### Done
