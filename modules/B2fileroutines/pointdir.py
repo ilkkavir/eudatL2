@@ -57,11 +57,11 @@ class AzEl:
         ## Boundary of direction points
         if len(uniq_grid) <= 3:
             # grid of <=3 points can be returned as is
-            dirs=[cmath.polar(point) for point in uniq_grid[:,0]+1.0j*uniq_grid[:,1]]
+            dirs=[cmath.polar(point) for point in (uniq_grid[:,0]+1.0j*uniq_grid[:,1])]
         else:
             # return boundary: convex hull of projected direction
             hull=sp.ConvexHull(uniq_grid)
-            dirs=[cmath.polar(point) for point in uniq_grid[hull.vertices,0]+1.0j*grid[hull.vertices,1]]
+            dirs=[cmath.polar(point) for point in (uniq_grid[hull.vertices,0]+1.0j*grid[hull.vertices,1])]
 
         ## Return pointing directions in EISCAT [azimuth,elevation] coordinates
         points=[[round(900.0-10.0*dir[1]*180.0/np.pi)/10.0 if dir[1]*180.0/np.pi<=90.0 else round(4500.0-10.0*dir[1]*180.0/np.pi)/10.0, round(900.0-10.0*dir[0])/10.0] for dir in dirs]
