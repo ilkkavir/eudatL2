@@ -36,7 +36,7 @@ if __name__=='__main__':
         
     ## parse arguments
     if len(sys.argv) != 7:
-        print("Usage: %s year1 month1 day1 year2 day2 month2" % (sys.argv[0]))
+        print("Usage: %s year1 month1 day1 year2 month2 day2" % (sys.argv[0]))
         exit(1)
         
     byear=int(sys.argv[1])
