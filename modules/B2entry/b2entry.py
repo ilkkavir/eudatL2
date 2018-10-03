@@ -28,13 +28,14 @@ class B2Entry:
         if self.config.getboolean('B2','b2share_entry'):
             
             from B2SHAREClient import B2SHAREClient,EISCATmetadata
+            from os import path
 
             ## Set up one client instance 
             client=B2SHAREClient.B2SHAREClient(community_id=self.config.get('B2','community'), url=self.config.get('B2','b2share_url'),token=self.config.get('B2','token') )
 
             ## Create a draft
             # Format JSON metadata
-            metadata_json = EISCATmetadata.MetaDataJSON(args, 2, self.config.get('B2','local_base_url') + outFile, self.config.get('B2','community'), self.config.get('B2','community_specific'))
+            metadata_json = EISCATmetadata.MetaDataJSON(args, 2, path.join(self.config.get('B2','local_base_url'),outFile), self.config.get('B2','community'), self.config.get('B2','community_specific'))
 
             # Create the B2SHARE entry
             draft_json=client.create_draft(metadata_json)            
