@@ -35,7 +35,7 @@ from configparser import SafeConfigParser
 configuration=SafeConfigParser()
 configuration.read('/usr/local/etc/eudat.conf')
 
-logging.basicConfig(format='%(asctime)s -%(user)s -  %(levelname)s - %(message)s', filename=configuration.get('Log','log_file_path'), level=eval(configuration.get('Log','logging_level')))
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', filename=configuration.get('Log','log_file_path'), level=eval(configuration.get('Log','logging_level')))
 
 
 
