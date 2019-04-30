@@ -26,15 +26,14 @@ import smtplib
 from email.message import EmailMessage
 from urllib.parse import urlparse
 from datetime import datetime
-# import configuration
 from os.path import basename
-# import configuration
 from configparser import SafeConfigParser
 
-
+# import configuration
 configuration=SafeConfigParser()
 configuration.read('/usr/local/etc/eudat.conf')
 
+# config log file
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', filename=configuration.get('Log','log_file_path'), level=eval(configuration.get('Log','logging_level')))
 
 
