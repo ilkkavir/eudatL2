@@ -3,11 +3,14 @@
 
 (C) Carl-Fredrik Enell, EISCAT HQ 2018
 carl-fredrik.enell@eiscat.se
+Ilkka Virtanen, University of Oulu 2022
+ilkka.i.virtanen@oulu.fi
 
 This package is intended to
 1) search the EISCAT L2 hourly directory catalogue in a specified date interval
 2) create hourly HDF5 files (which should be copied to a web server e.g. b2.eiscat.se)
 3) create B2SHARE metadata entries including experiment info and URLs to above web server  
+4) to make simple mat to hdf5 conversion of local files without access to the EISCAT catalogue 
 
 1. Dependencies
 - Python 3.x with standard libraries
@@ -21,7 +24,8 @@ Copy default configuration file to config/eudat.conf and modify.
 3. Install
 python3 setup.py install
 
-4. Usage example
+4. Usage examples
 
 L2toB2 2014 1 1 2014 1 2
 
+L2toB2simple.py ipy_fixed42p_2.0l_IPY 42m ipy_fixed42p_2.0l_IPY@42m hdf5files/ipy_fixed42p_2.0l_IPY@42m
