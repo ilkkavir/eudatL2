@@ -9,10 +9,14 @@ Produce B2SHARE entries and HDF5 files for Level 2 data and metadata.
 Processes specified time interval creating one HDF file per hourly subdirectory.
 This is a simplified version that does not read any information from the EISCAT DB
 
-Usage: L2toB2.py <expname> <antenna> <datadir> <outputdir>
+Usage: L2toB2simple.py <expname> <antenna> <datadir> <outputdir>
+
+Example: L2toB2simple.py ipy_fixed42p_2.0l_IPY 42m ipy_fixed42p_2.0l_IPY@42m hdf5files/ipy_fixed42p_2.0l_IPY@42m
 
 (C) Carl-Fredrik Enell EISCAT HQ  2018
 carl-fredrik.enell@eiscat.se
+Ilkka Virtanen University of Oulu 2022
+ilkka.i.virtanen@oulu.fi
 """
 
 ### Required standard libraries
